@@ -4,14 +4,43 @@ import { useState } from "react";
 import Spotify from "../../util/Spotify";
 
 export default function SearchBar(props) {
-  const [term, setTerm] = useState("");
+  const [term, setTerm] = useState("phish");
   const [token, setToken] = useState("");
 
-  const search = async () => {
+  if (!token) {
     let token = Spotify.getAccessToken();
     setToken(token);
+  }
+
+  window.history.pushState({}, "Jammming", "/");
+
+  const search = async () => {
+    let deviceId = await Spotify.getDevices(token);
     let results = await Spotify.search(term, token);
     props.onSearchResults(results);
+    console.log({ results });
+    await Spotify.play(token, {
+      deviceId: deviceId.devices[0].id,
+      uris: [results[0].id],
+    });
+  };
+
+  window.onSpotifyWebPlaybackSDKReady = () => {
+    const player = new window.Spotify.Player({
+      name: "Web Playback SDK Quick Start Player",
+      getOAuthToken: (cb) => {
+        cb(
+          "BQBYztsbE6jOFWxTU7FSwtpVHdWpcxErsEQsTIXyu70yCcJrblCMYiGqs6ZEB0NMQKh-5NWyGRcyaB5kOD3UHHFhEDp05IArQVOOQW5VarwEhG_FKg1IbDC5W_OGSGdHRItFwMPsmwCCzr6QdBKwwhGf7NK_PUaCx_dx8tANhBKD7dqduBin3uFzjoBI1f0wkz84"
+        );
+      },
+      volume: 0.5,
+    });
+    player.connect();
+  };
+
+  const next = async () => {
+    let deviceId = await Spotify.getDevices(token);
+    Spotify.next(token, deviceId.devices[0].id);
   };
 
   return (
@@ -25,6 +54,9 @@ export default function SearchBar(props) {
       />
       <button className="SearchButton" onClick={search}>
         SEARCH
+      </button>{" "}
+      <button className="SearchButton" onClick={next}>
+        NEXT
       </button>
     </div>
   );

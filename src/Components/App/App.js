@@ -8,6 +8,7 @@ import Playlist from "../Playlist";
 function App() {
   const [results, setResults] = useState([]);
   const [playlist, setPlaylist] = useState([]);
+  const [savePlaylist, setSavePlaylist] = useState([]);
 
   function onSearchResults(results) {
     setResults(results);
@@ -21,6 +22,10 @@ function App() {
 
   function removeTrack(track) {
     setPlaylist(playlist.filter((t) => t.id !== track.id));
+  }
+
+  function savePlaylist(TrackList) {
+    console.log("Save playlist");
   }
 
   console.log(playlist);
@@ -38,7 +43,11 @@ function App() {
             addTrack={addTrack}
             removeTrack={removeTrack}
           />
-          <Playlist playlist={playlist} />
+          <Playlist
+            playlist={playlist}
+            addTrack={addTrack}
+            removeTrack={removeTrack}
+          />
         </div>
       </div>
     </div>

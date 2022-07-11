@@ -5,6 +5,7 @@ export default function TrackList(props) {
     <div className="TrackList">
       {props?.results?.map((track) => (
         <Track
+          isRemoval={props.isRemoval}
           key={track.id}
           track={track}
           addTrack={props.addTrack}
